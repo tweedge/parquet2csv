@@ -20,7 +20,10 @@ jobs:
       - name: Install parquet2csv
         run: |
           pip install .
+      - name: Delete local (not installed) copy out of paranoia
+        run: |
+          rm -r parquet2csv/
       - name: Ensure parquet2csv (installed version) works
         run: |
-          parquet2csv/ --parquet example/kylo.parquet --csv example/kylo_test.csv
+          parquet2csv --parquet example/kylo.parquet --csv example/kylo_test.csv
           diff example/kylo_test.csv example/kylo.csv
