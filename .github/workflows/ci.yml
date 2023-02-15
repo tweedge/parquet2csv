@@ -27,3 +27,28 @@ jobs:
         run: |
           parquet2csv --parquet example/kylo.parquet --csv example/kylo_test.csv
           diff example/kylo_test.csv example/kylo.csv
+
+
+  dist:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+      TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Ensure required tools are installed
+        run: |
+          pip install setuptools wheel twine
+      - name: Build parquet2csv
+        run: |
+          python setup.py sdist bdist_wheel
+      - name: Upload (if version bumped)
+        run: |
+          twine upload dist/* --skip-existing
