@@ -43,7 +43,7 @@ def main():
 
     # read and write the Parquet file in chunks
     for i in range(0, num_rows, args.chunk_size):
-        table = parquet_reader.read_row_group(i, min(args.chunk_size, num_rows - i))
+        table = parquet_reader.read_row_group(i)
         df = table.to_pandas()
         df.to_csv(csv_writer, header=False, index=False)
         del table, df
